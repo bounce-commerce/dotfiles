@@ -5,5 +5,5 @@ Bounce Commerce's dotfiles, managed with [`chezmoi`](https://github.com/twpayne/
 Install them with:
 
 ```sh
-sh -c "$(fetch -q -o - https://raw.githubusercontent.com/5u623l20/dotfiles/main/install)"
+sh -c "$(fetch -q -o - https://raw.githubusercontent.com/bounce-commerce/dotfiles/main/install)"
 ```
