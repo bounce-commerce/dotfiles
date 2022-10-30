@@ -1,0 +1,73 @@
+# vim: set ft=sh :
+
+#-----------------------------------------------------------------------------#
+#-------------------Universal/Generic Settings--------------------------------#
+#-----------------------------------------------------------------------------#
+PATH="/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:$HOME/bin:$HOME/.local/bin"; export PATH
+TZ='CEST'; export TZ
+LANG='en_US.UTF-8'; export LANG
+LC_ALL='en_US.UTF-8'; export LC_ALL
+LC_CTYPE='en_US.UTF-8'; export LC_CTYPE
+MM_CHARSET='UTF-8'; export MM_CHARSET
+BLOCKSIZE='M'; export BLOCKSIZE
+LSCOLORS='CxGxxxxxBxexExcxdx'; export LSCOLORS
+XDG_DATA_HOME="$HOME/.local/share"; export XDG_DATA_HOME
+XDG_CONFIG_HOME="$HOME/.config"; export XDG_CONFIG_HOME
+XDG_STATE_HOME="$HOME/.local/state"; export XDG_STATE_HOME
+XDG_STATE_HOME="$XDG_DATA_HOME"; export XDG_STATE_HOME
+XDG_CACHE_HOME="$HOME/.cache"; export XDG_CACHE_HOME
+TMUX_CONFIG="$XDG_CONFIG_HOME/tmux/tmux.conf"; export TMUX_CONFIG
+VIMINIT="source $XDG_CONFIG_HOME/vim/vimrc"; export VIMINIT
+
+#-----------------------------------------------------------------------------#
+#-------------------------------Set EDITOR(s) --------------------------------#
+#-----------------------------------------------------------------------------#
+if [ -x /usr/local/bin/vim ]; then
+    EDITOR='/usr/local/bin/vim'; export EDITOR
+    VISUAL='/usr/local/bin/vim'; export VISUAL
+    alias e='/usr/local/bin/vim'
+    if [ -x /usr/local/bin/view ]; then
+        alias v='/usr/local/bin/view'
+    elif [ -x /usr/local/bin/bat ]; then
+        alias v='/usr/local/bin/bat'
+    fi
+elif [ -x /usr/bin/vi ]; then
+    EDITOR='/usr/bin/vi'; export EDITOR
+    VISUAL='/usr/bin/vi'; export VISUAL
+    # on some systems where vim is not installed, I tend to type vim
+    alias e='/usr/bin/vi'
+    if [ -x /usr/local/bin/bat ]; then
+        alias v='/usr/local/bin/bat'
+    elif [ -x /usr/bin/view ]; then
+        alias v='/usr/bin/view'
+    fi
+fi
+FCEDIT=$EDITOR;  export FCEDIT
+HISTEDIT=$EDITOR; export HISTEDIT
+export TERM
+
+#-----------------------------------------------------------------------------#
+#-------------------------------Set PAGER(s) ---------------------------------#
+#-----------------------------------------------------------------------------#
+#------Set PAGER-----#
+if [ -x /usr/bin/less ]; then
+    PAGER='/usr/bin/less'; export PAGER
+    LESS='-FiJqX'; export LESS  # default options to less
+else
+    PAGER="more"; export PAGER
+fi
+
+ENV=$HOME/.shrc; export ENV
+
+# Let sh(1) know it's at home, despite /home being a symlink.
+if [ "$PWD" != "$HOME" ] && [ "$PWD" -ef "$HOME" ] ; then cd || return ; fi
+
+# Query terminal size; useful for serial lines.
+if [ -x /usr/bin/resizewin ] ; then /usr/bin/resizewin -z ; fi
+
+# Display a random cookie on each login.
+if [ -x /usr/bin/fortune ] ; then /usr/bin/fortune freebsd-tips ; fi
+
+#-----------------------------------------------------------------------------#
+#-------------------------All Shells Settings --------------------------------#
+#-----------------------------------------------------------------------------#
