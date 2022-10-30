@@ -1,0 +1,50 @@
+#!/bin/sh
+
+set -e # -e: exit on error
+
+_OS=$(uname)
+_ARCH=$(uname -p)
+_CHEZMOI_VERSION="2.25.0"
+_GITHUB_USERNAME="bounce-commerce"
+
+readonly _OS
+
+if [ ! "$(command -v chezmoi)" ]; then
+    bin_dir="$HOME/.local/bin"
+    CHEZMOI_BIN="$bin_dir/chezmoi"
+    case "${_OS}" in
+        "FreeBSD")
+            if [ ! -d "${bin_dir}" ]; then
+                mkdir -p "${bin_dir}"
+            fi
+            TMPDIR=$(mktemp -d)
+            CHEZMOI_FILE_NAME="chezmoi_${_CHEZMOI_VERSION}_freebsd_${_ARCH}.tar.gz"
+            CHEZMOI_URL="https://github.com/twpayne/chezmoi/releases/download/v${_CHEZMOI_VERSION}/${CHEZMOI_FILE_NAME}"
+            CHECKSUMS="chezmoi_${_CHEZMOI_VERSION}_checksums.txt"
+            CHECKSUMS_URL="https://github.com/twpayne/chezmoi/releases/download/v${_CHEZMOI_VERSION}/${CHECKSUMS}"
+            fetch -o "${TMPDIR}/${CHECKSUMS}" "${CHECKSUMS_URL}" || exit 1
+            fetch -o "${TMPDIR}/${CHEZMOI_FILE_NAME}" "${CHEZMOI_URL}" || exit 1
+            HASH_GOT=$(sha256 -q "${TMPDIR}/${CHEZMOI_FILE_NAME}" 2>/dev/null) || return 1
+            HASH_WANT=$(grep "${CHEZMOI_FILE_NAME}" "${TMPDIR}/${CHECKSUMS}" 2>/dev/null | tr '\t' ' ' | cut -d ' ' -f 1)
+            if [ -z "${HASH_WANT}" ]; then
+                echo "Unable to find checksum for ${CHEZMOI_FILE_NAME} in ${CHECKSUMS}"
+                return 1
+            fi
+            if [ "${HASH_WANT}" != "${HASH_GOT}" ]; then
+                echo "Checksum for ${CHEZMOI_FILE_NAME} did not verify ${HASH_WANT} vs ${HASH_GOT}"
+                return 1
+            fi
+            cd ${TMPDIR}
+            tar -zxvf ${TMPDIR}/${CHEZMOI_FILE_NAME} -C ${bin_dir} chezmoi
+            ${CHEZMOI_BIN} init -a $_GITHUB_USERNAME
+            ;;
+        *)
+            echo "This script is only for FreeBSD systems." >&2
+            exit 1
+            ;;
+    esac
+else
+    CHEZMOI_BIN=chezmoi
+    ${CHEZMOI_BIN} upgrade
+    ${CHEZMOI_BIN} update -a
+fi
