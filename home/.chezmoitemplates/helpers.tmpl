@@ -1,0 +1,206 @@
+command_exists() {
+  command -v "$@" >/dev/null 2>&1
+}
+
+lowercase() {
+  echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
+e_header() {
+  printf "\n${bold}${purple}==========  %s  ==========${reset}\n" "$@"
+}
+
+e_arrow() {
+  printf "➜ %s\n" "$@"
+}
+
+e_success() {
+  printf "${green}✔ %s${reset}\n" "$@"
+}
+
+e_error() {
+  printf "${red}✖ %s${reset}\n" "$@"
+}
+
+e_warning() {
+  printf "${tan}➜ %s${reset}\n" "$@"
+}
+
+e_underline() {
+  printf "${underline}${bold}%s${reset}\n" "$@"
+}
+
+e_bold() {
+  printf "${bold}%s${reset}\n" "$@"
+}
+
+e_note() {
+  printf "${underline}${bold}${blue}Note:${reset}  ${yellow}%s${reset}\n" "$@"
+}
+
+seek_confirmation() {
+    printf "\\n${bold}%s${reset}" "$@"
+    old_stty_cfg=$(stty -g)
+    stty raw -echo
+    answer=$( while ! head -c 1 | grep -i '[ny]' ;do true ;done )
+    stty $old_stty_cfg
+    if echo "$answer" | grep -iq "^n" ;then
+        exit 1
+    fi
+}
+
+# Pushover Notifications
+# Usage: pushover "Title Goes Here" "Message Goes Here"
+pushover () {
+  PUSHOVERURL="https://api.pushover.net/1/messages.json"
+  API_KEY=$PUSHOVER_API_KEY
+  USER_KEY=$PUSHOVER_USER_KEY
+  DEVICE=$PUSHOVER_DEVICE
+
+  TITLE="${1}"
+  MESSAGE="${2}"
+
+  curl \
+    -F "token=${API_KEY}" \
+    -F "user=${USER_KEY}" \
+    -F "device=${DEVICE}" \
+    -F "title=${TITLE}" \
+    -F "message=${MESSAGE}" \
+    "${PUSHOVERURL}" > /dev/null 2>&1
+}
+
+################################################################################
+#
+# Set Colors
+#
+# Use colors, but only if connected to a terminal, and that terminal
+# supports them.
+#if which tput >/dev/null 2>&1; then
+  #[ -z $TERM ] && TPUTTERM='-T xterm-256color' || TPUTTERM=''
+#  [ -z $TERM ] && TPUTTERM='-T dumb' || TPUTTERM=''
+#  ncolors=$(tput colors "$TPUTTERM" 2>&1)
+#fi
+if [ -t 1 ]; then
+#  && [ -n "$ncolors" ] && [ "$ncolors" -ge 8 ]; then
+    bold="$(tput bold)"
+    underline=$(tput sgr 0 1)
+    reset="$(tput sgr0)"
+    red="$(tput setaf 1)"
+    green="$(tput setaf 2)"
+    yellow="$(tput setaf 3)"
+    blue="$(tput setaf 4)"
+    purple=$(tput setaf 171)
+    tan=$(tput setaf 3)
+else
+    bold=""
+    underline=""
+    reset=""
+    red=""
+    green=""
+    yellow=""
+    blue=""
+    purple=""
+    tan=""
+fi
+
+PKG_BIN=$(command -v pkg)
+PKG_CMD="$SUDO_CMD $PKG_BIN install -y"
+
+set_download() {
+  if command_exists curl; then
+    DOWNLOAD_BIN=$(command -v curl)
+    DOWNLOAD_CMD="$DOWNLOAD_BIN -fsSL"
+  elif command_exists wget; then
+    DOWNLOAD_BIN=$(command -v wget)
+    DOWNLOAD_CMD="$DOWNLOAD_BIN -q -O-"
+  elif command_exists fetch; then
+    DOWNLOAD_BIN=$(command -v fetch)
+    DOWNLOAD_CMD="$DOWNLOAD_BIN -q -o -"
+  elif command_exists curlie; then
+    DOWNLOAD_BIN=$(command -v curlie)
+    DOWNLOAD_CMD="$DOWNLOAD_BIN -fsSL"
+  fi
+}
+
+set_download
+
+CHEZMOI_OS={{ .chezmoi.os }}
+CHEZMOI_ARCH={{ .chezmoi.arch }}
+
+AG_BIN=$(command -v ag)
+AG_PKG="the_silver_searcher"
+BASH_BIN=$(command -v bash)
+BASH_PKG="bash"
+BAT_BIN=$(command -v bat)
+BAT_PKG="bat"
+FORTUNE_BIN=$(command -v fortune)
+FZF_BIN=$(command -v fzf)
+FZF_PKG="fzf"
+FZF_VERSION="0.30.0"
+GIT_BIN=$(command -v git)
+GIT_PKG="git-lite"
+HTOP_BIN=$(command -v htop)
+HTOP_PKG="htop"
+PYTHON_BIN=$(command -v python3)
+PYTHON_PKG="python3"
+PYTHON_DEFAULT="py39-"
+STRFILE_BIN=$(command -v strfile)
+SCREEN_BIN=$(command -v screen)
+SCREEN_PKG="screen"
+TMUX_BIN=$(command -v tmux)
+TMUX_PKG="tmux"
+VIM_BIN=$(command -v vim)
+VIM_PKG="vim"
+ZSH_BIN=$(command -v zsh)
+ZSH_PKG="zsh"
+#tree
+#asciinema
+#awscli
+#bottom
+#bpytop
+#broot
+#caddy
+#choose
+#cookiecutter
+#curl
+#dstask
+#duf
+#dust
+#exa
+#fd
+#getdns
+#gh
+#git-delta
+#glances
+#gnupg
+#gopass
+#grex
+#hey
+#hping
+#httpd
+#httpie
+#jq
+#kubernetes-cli
+#ldns
+#lftp
+#lynx
+#mtr
+#neofetch
+#nmap
+#opensc
+#pwgen
+#ranger
+#ripgrep
+#rsync
+#sd
+#shellcheck
+#tealdeer
+#thefuck
+#vegeta
+#w3m
+#wget
+#wireguard-tools
+#wrk
+#wtfutil
+
+# vim: ft=sh:
