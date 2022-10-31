@@ -1,0 +1,112 @@
+" In insert mode, indent each line to the same level as the line above or below. Use with shiftwidth option.
+set autoindent
+"
+" Display changes after each editor command. (For global replacement, display last replacement.)
+" set autoprint
+"
+" Automatically write (save) file if changed, before opening another file with :n or before giving Linux command with :!.
+set autowrite
+"
+" Ignore all control characters during input (except tab, newline, or formfeed).
+" set beautify
+"
+" Name the directory in which ex stores buffer files. (Directory must be writable.)
+" set directory=/tmp
+"
+" edcompatible noed-compatible Use ed-like features on substitute commands.
+" set edcompatible
+"
+" errorbells (eb) errorbells Sound bell when an error occurs.
+" set errorbells
+"
+" exrc (ex) noexrc Allow the execution of ~/.exrc files that reside outside the user's home directory.
+" set exrc
+"
+" Define boundaries for terminal hardware tabs.
+" set hardtabs=8
+"
+" Disregard case during a search.
+set ignorecase
+"
+" Insert indents in appropriate LISP format. (), { }, [[, and ]] are modified to have meaning for LISP.
+" set lisp
+"
+" Print tabs as ^I; mark ends of lines with $. (Use list to tell if end character is a tab or a space.)
+" set list
+"
+" Wildcard characters . (dot), * (asterisk), and [ ] (brackets) have special meaning in patterns.
+" set magic
+"
+" Permit system messages to display on terminal while editing in vi.
+" set mesg
+"
+" Display line numbers on left of screen during editing session.
+set number
+"
+" Terminal redraws screen whenever edits are made (in other words, insert mode pushes over existing characters, and deleted lines immediately close up). Default depends on line speed and terminal type. noredraw is useful at slow speeds on a dumb terminal: deleted lines show up as @, and inserted text appears to overwrite existing text until you press Esc.
+" set redraw
+"
+" Allow nested map sequences.
+" set remap
+"
+" Display a message on the prompt line whenever you make an edit that affects at least a certain number of lines. For example, 6dd reports the message "6 lines deleted."
+" set report=5
+"
+" Amount of screen to scroll.
+" set scroll=<1/2 window>
+"
+" Define section delimiters for [[ ]] movement. The pairs of characters in the value are the names of nroff/troff macros that begin sections.
+" set sections=SHNHH HU
+"
+" Pathname of shell used for shell escape (:!) and shell command (:sh). Default value is derived from SHELL variable.
+" set shell=/bin/sh
+"
+" Define number of spaces used by the indent commands (^T, ^D, >>, and <<).
+set shiftwidth=4
+"
+" In vi, when ) or } is entered, cursor moves briefly to matching ( or {. (If the match is not on the screen, rings the error message bell.) Very useful for programming.
+set showmatch
+"
+" In insert mode, displays a message on the prompt line indicating the type of insert you are making, such as "Open Mode" or "Append Mode."
+set showmode
+"
+" Hold off display during insert. Default depends on line speed and terminal type.
+" set slowopen
+"
+" Define number of spaces that a tab indents during editing session. (Printer still uses system tab of 8.)
+set tabstop=4
+"
+" Define number of characters that are significant for tags. Default (0) means that all characters are significant.
+" set taglength=0
+"
+" Define pathname of files containing tags. By default, the system looks for files tags (in the current directory) and /usr/lib/tags.
+" set tags=tags /usr/lib/tags
+"
+" Set terminal type.
+" set term=
+"
+" Display shorter error messages.
+" set terse
+"
+" Keyboard maps timeout after 1second.
+" set timeout=1second
+"
+" Set terminal type. Default is inherited from TERM environment variable.
+" set ttytype=
+"
+" Display the message, "No write since last change."
+" set warn
+"
+" Show a certain number of lines of the file on the screen. Default depends on line speed and terminal type.
+" set window=
+"
+" Define right margin. If greater than 0, automatically insert carriage returns to break lines.
+" set wrapmargin=0
+"
+" Searches wrap around either end of file.
+" set nowrapscan
+"
+" Allow saving to any file.
+" set writeany
+"
+ab MMR  Muhammad Moinur Rahman
