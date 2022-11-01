@@ -10,7 +10,7 @@ _GITHUB_USERNAME="bounce-commerce"
 readonly _OS
 
 if [ ! "$(command -v chezmoi)" ]; then
-    bin_dir="$HOME/.local/bin"
+    bin_dir="$HOME/bin"
     CHEZMOI_BIN="$bin_dir/chezmoi"
     case "${_OS}" in
         "FreeBSD")
