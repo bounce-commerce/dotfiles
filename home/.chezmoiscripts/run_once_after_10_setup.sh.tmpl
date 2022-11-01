@@ -17,7 +17,7 @@ setup_services() {
   sysrc syslogd_flags="-ss"
   sysrc sendmail_enable="NO"
   sysrc sshd_enable="YES"
-  sysrc sshd_flags="-o PermitRootLogin=without-password"
+  sysrc sshd_flags="-o PermitRootLogin=without-password -o PasswordAuthentication=no"
   sysrc ntpdate_enable="YES"
   sysrc ntpd_enable="YES"
   sysrc powerd_enable="YES"
@@ -49,12 +49,25 @@ setup_shell() {
   chsh -s /usr/local/bin/zsh toor
 }
 
+setup_hostsfile() {
+  sed -i '' -e 's/localhost.my.domain/localhost.bounce-commerce.de/g'
+}
+
+setup_mailer() {
+  openssl dhparam -out /etc/mail/certs/dh.param 4096
+  sed -i '' -e 's|# root:     me@my.domain|root: sysadmin@bounce-commerce.de|g' /etc/mail/aliases
+  newaliases
+  service sendmail restart
+}
+
 main() {
   setup_interfaces
   setup_services
   setup_ssh
   setup_update
   setup_shell
+  setup_hostsfile
+  setup_mailer
 }
 
 main "$@"
