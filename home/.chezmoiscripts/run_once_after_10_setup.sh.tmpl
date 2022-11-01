@@ -37,8 +37,8 @@ setup_update() {
 
 setup_ssh() {
   $MKDIR /root/.ssh
-  echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFUP46mf4PBXmvHtgqAkJM6yK+joqr0ByVFD0NwtxZQQ bofh@bounce-experts" >> /root/.ssh/authorized_keys
-  echo "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBA2+Gd5zEzkkg6sbp0zvKIH8CCb/fkyqsQ8iuhlwU7OZIO+iU/yWKMClk9x3D3oDSKIJUHYbePZ5Pq1r1JtKj7Q= thorny@kara" >> /root/.ssh/authorized_keys
+  echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFUP46mf4PBXmvHtgqAkJM6yK+joqr0ByVFD0NwtxZQQ bofh@bounce-experts" > /root/.ssh/authorized_keys
+  grep "thorny@kara" /root/.ssh/authorized_keys || echo "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBA2+Gd5zEzkkg6sbp0zvKIH8CCb/fkyqsQ8iuhlwU7OZIO+iU/yWKMClk9x3D3oDSKIJUHYbePZ5Pq1r1JtKj7Q= thorny@kara" >> /root/.ssh/authorized_keys
 }
 
 setup_sudo() {
