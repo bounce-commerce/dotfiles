@@ -1,3 +1,14 @@
+# set paths
+PATH=/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin
+
+# version to init base for
+FREEBSD_VERSION=$(freebsd-version)
+VERSION=${FREEBSD_VERSION%-*}
+
+INTERFACE=$(route get 0.0.0.0 | egrep '^ *interface' | awk '{ print $NF; exit }')
+MKDIR="mkdir -p"
+CAT=cat
+
 command_exists() {
   command -v "$@" >/dev/null 2>&1
 }
@@ -147,6 +158,8 @@ PYTHON_DEFAULT="py39-"
 STRFILE_BIN=$(command -v strfile)
 SCREEN_BIN=$(command -v screen)
 SCREEN_PKG="screen"
+SUDO_BIN=$(command -v sudo)
+SUDO_PKG="sudo"
 TMUX_BIN=$(command -v tmux)
 TMUX_PKG="tmux"
 VIM_BIN=$(command -v vim)
@@ -202,5 +215,7 @@ ZSH_PKG="zsh"
 #wireguard-tools
 #wrk
 #wtfutil
+
+
 
 # vim: ft=sh:

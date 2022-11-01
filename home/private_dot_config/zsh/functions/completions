@@ -1,0 +1,28 @@
+#
+# Autocompletion for svcat [Kubernetes service catalog cli](https://github.com/kubernetes-incubator/service-catalog).
+#
+if [ $commands[svcat] ]; then
+  source <(svcat completion zsh)
+fi
+#
+# Autocompletion for gopass [The Team Password Manager](https://www.gopass.pw/).
+#
+if [ $commands[gopass] ]; then
+  gopass completion zsh > $ZDOTDIR/functions/common/_gopass
+else
+  rm -f $ZDOTDIR/functions/common/_gopass
+fi
+#
+# Autocompletion for helm [Helm](https://helm.sh/), the Kubernetes package manager.
+#
+if [ $commands[helm] ]; then
+  source <(helm completion zsh)
+fi
+#
+# Autocompletion for chezmoi [Chemzoi](https://www.chezmoi.io/).
+#
+if [ $commands[chezmoi] ]; then
+  chezmoi completion zsh --output=$ZDOTDIR/functions/common/_chezmoi
+else
+  rm -f $ZDOTDIR/functions/common/_chezmoi
+fi

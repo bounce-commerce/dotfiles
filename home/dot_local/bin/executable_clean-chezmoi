@@ -1,0 +1,11 @@
+#!/bin/sh
+rm -rf ~/.zshrc
+rm -rf ~/.zsh
+rm -rf ~/.zlogout
+rm -rf ~/.zshenv
+rm -rf ~/.exrc
+rm -rf ~/.mbsyncrc
+rm -rf ~/.vimrc
+rm -rf ~/.config
+rm -rf ~/.local
+rm -rf ~/.cache

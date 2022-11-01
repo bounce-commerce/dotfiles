@@ -1,0 +1,140 @@
+#   command_exists: checks for existence of a command (0 = true, 1 = false)
+#   -------------------------------------------------------------------
+command_exists() {
+  command -v "$@" >/dev/null 2>&1
+}
+
+lowercase() {
+  echo "$1" | sed "y/ABCDEFGHIJKLMNOPQRSTUVWXYZ/abcdefghijklmnopqrstuvwxyz/"
+}
+
+#e_header() {
+#  printf "\n${bold}${purple}==========  %s  ==========${reset}\n" "$@"
+#}
+
+#e_arrow() {
+#  printf "➜ %s\n" "$@"
+#}
+
+#e_success() {
+#  printf "${green}✔ %s${reset}\n" "$@"
+#}
+
+#e_error() {
+#  printf "${red}✖ %s${reset}\n" "$@"
+#}
+
+#e_warning() {
+#  printf "${tan}➜ %s${reset}\n" "$@"
+#}
+
+#e_underline() {
+#  printf "${underline}${bold}%s${reset}\n" "$@"
+#}
+
+#e_bold() {
+#  printf "${bold}%s${reset}\n" "$@"
+#}
+
+#e_note() {
+#  printf "${underline}${bold}${blue}Note:${reset}  ${yellow}%s${reset}\n" "$@"
+#}
+
+#seek_confirmation() {
+#    printf "\\n${bold}%s${reset}" "$@"
+#    old_stty_cfg=$(stty -g)
+#    stty raw -echo
+#    answer=$( while ! head -c 1 | grep -i '[ny]' ;do true ;done )
+#    stty $old_stty_cfg
+#    if echo "$answer" | grep -iq "^n" ;then
+#        exit 1
+#    fi
+#}
+
+#
+# Pushover Notifications
+# Usage: pushover "Title Goes Here" "Message Goes Here"
+#
+#pushover () {
+#    PUSHOVERURL="https://api.pushover.net/1/messages.json"
+#    API_KEY=$PUSHOVER_API_KEY
+#    USER_KEY=$PUSHOVER_USER_KEY
+#    DEVICE=$PUSHOVER_DEVICE
+#
+#    TITLE="${1}"
+#    MESSAGE="${2}"
+#
+#    curl \
+#        -F "token=${API_KEY}" \
+#        -F "user=${USER_KEY}" \
+#        -F "device=${DEVICE}" \
+#        -F "title=${TITLE}" \
+#        -F "message=${MESSAGE}" \
+#        "${PUSHOVERURL}" > /dev/null 2>&1
+#}
+
+#set_sudo() {
+#  if command_exists sudo; then
+#    if sudo -vn 2>&1 | grep 'password' > /dev/null; then
+#      SUDO_BIN=$(command -v sudo)
+#    else
+#      SUDO_BIN=""
+#    fi
+#  fi
+#}
+
+#set_sudo
+
+#{{ if (ne .chezmoi.os "darwin") -}}
+#check_packagemgr() {
+#  if command_exists yum; then
+#    PKG_BIN=$(command -v yum)
+#    PKG_CMD="$SUDO_CMD $PKG_BIN -y -qq install"
+#  elif command_exists pkg; then
+#    PKG_BIN=$(command -v pkg)
+#    PKG_CMD="$SUDO_CMD $PKG_BIN install -y"
+#  elif command_exists pkg_add; then
+#    PKG_BIN=$(command -v pkg_add)
+#    PKG_CMD="$SUDO_CMD $PKG_BIN -U -I -x"
+#  elif command_exists apt; then
+#    PKG_BIN=$(command -v apt)
+#    PKG_CMD="$SUDO_CMD $PKG_BIN -y install"
+#  fi
+#}
+#{{ end }}
+
+#set_download() {
+#  if command_exists curl; then
+#    DOWNLOAD_BIN=$(command -v curl)
+#  elif command_exists wget; then
+#    DOWNLOAD_BIN=$(command -v wget)
+#  elif command_exists fetch; then
+#    DOWNLOAD_BIN=$(command -v fetch)
+#  elif command_exists curlie; then
+#    DOWNLOAD_BIN=$(command -v curlie)
+#  fi
+#}
+
+#set_download
+#{{ if (ne .chezmoi.os "darwin") -}}
+#check_packagemgr
+#{{ end }}
+
+#GIT_BIN=$(command -v git)
+#ZSH_BIN=$(command -v zsh)
+#if command_exists python3; then
+#  PYTHON_BIN="python3"
+#elif command_exists python3.6; then
+#  PYTHON_BIN="python3.6"
+#elif command_exists python3.7; then
+#  PYTHON_BIN="python3.7"
+#elif command_exists python3.8; then
+#  PYTHON_BIN="python3.8"
+#elif command_exists python; then
+#  PYTHON_BIN="python"
+#elif command_exists python2; then
+#  PYTHON_BIN="python2"
+#fi
+#FREEBSD_PY_DEFAULT="py38-"
+
+# vi: set ft=sh

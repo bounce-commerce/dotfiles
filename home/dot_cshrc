@@ -1,0 +1,197 @@
+#set echo
+#set verbose
+# If the exit value is non-zero, print it.
+# Very handy when you do scripting.
+unset printexitvalue
+# Set some Colors!
+set     red="%{\033[1;31m%}"
+set   green="%{\033[0;32m%}"
+set  yellow="%{\033[1;33m%}"
+set    blue="%{\033[1;34m%}"
+set magenta="%{\033[1;35m%}"
+set    cyan="%{\033[1;36m%}"
+set   white="%{\033[0;37m%}"
+set     end="%{\033[0m%}" # This is needed at the end... :(
+
+# Set some environment variables
+if (`where vim` != "") then
+    setenv EDITOR vim
+    setenv VISUAL vim
+    alias e vim
+    if (`where view` != "") then
+        alias v view
+    else if (`where bat` != "") then
+        alias v bat
+    else
+        alias v cat
+    endif
+else if (`where vi` != "") then
+    setenv EDITOR vi
+    setenv VISUAL vi
+    alias e vi
+    if (`where view` != "") then
+        alias v view
+    else if (`where bat` != "") then
+        alias v bat
+    else
+        alias v cat
+    endif
+endif
+if ( -e `where less`) then
+    setenv PAGER less
+    setenv LESS '-eFiJqRX'
+    alias more less
+else
+    setenv PAGER more
+endif
+setenv XDG_DATA_HOME $HOME/.local/share
+setenv XDG_CONFIG_HOME $HOME/.config
+setenv XDG_STATE_HOME $HOME/.local/state
+setenv XDG_STATE_HOME $XDG_DATA_HOME
+setenv XDG_CACHE_HOME $HOME/.cache
+setenv LANG en_US.UTF-8
+setenv LC_ALL en_US.UTF-8
+setenv LC_CTYPE en_US.UTF-8
+setenv VIMINIT "so $XDG_CONFIG_HOME/vim/vimrc"
+setenv TMUX_CONFIG $XDG_CONFIG_HOME/tmux/tmux.conf
+setenv SHORT_HOST `echo $HOST | cut -f 1 -d.`
+# Color on many system utilities
+setenv CLICOLOR 1
+set path = (/sbin /bin /usr/sbin /usr/bin /usr/local/sbin /usr/local/bin $HOME/bin $HOME/.local/bin)
+
+########################################################################
+#         skip remaining setup if not an interactive shell           #
+########################################################################
+if ($?USER == 0 || $?prompt == 0) exit
+# This shows the current path in inverse color and that is nice.
+# It is important to know all the time in what directory you are.
+#   explanation: %B begin bold, %b end bold, %S begin inverse, %s end inverse
+#   explanation: %m short system name, %/ full directory name, %# is # or %
+#   explanation: depending if you are root or non-root.
+if ($?prompt) then
+    # Change only root's prompt
+    if (`id -g` == 0) then
+        set prompt="%B%n@%U%m%u%b %~ %# "
+    else
+        set prompt="\
+${red}%B%n${yellow}@${blue}%U%m%u%b ${yellow}%~\
+${cyan}%#${end} "
+    endif
+    # An interactive shell -- set some stuff up
+    unset promptchars
+    set promptchars = "%#"
+    # Prompt used when waiting for stufffor 'for' or 'while'...
+    set prompt2="%R?"
+    # Prompt used when correcting.
+    # Correct????
+    # 	y: yes, n: no, e: edit
+    # 	<SPACE>: yes
+    # 	<ENTER>: no
+    set prompt3="CORRECT> %B%R%b (y|n|e)?"
+
+    set autocorrect
+    set autoexpand
+    #set autolist = ambiguous
+    set autolist
+    set autorehash
+    set filec
+    set history = 2000
+    set savehist = (1000 merge)
+    set mail = (/var/mail/$USER)
+    set correct=cmd
+    set killdup=erase
+    set listjobs=long
+    set listlinks
+    set listmax=100
+    set nobeep
+    set rmstar
+    set URLS=(https://github.com/ https://www.slashdot.org/ https://www.lwn.net/ https://www.cryptome.org/ https://www.google.com/)
+    # Watch any(1) other users every 0 seconds from any(2) console,
+    # when logging in/out.(I like this one!)
+    # It gives something like "root has logged on tty1 from local."
+    # You may find it annoying on busy systems (like shell1.sourceforge.net)
+    set watch=(0 any any)
+
+    # Format of output string when someone logins or logouts.(Look above)
+    # Hmm, can't be internationalised easily.
+    set who="%n has %a %l from %M."
+
+    # Set to 'insert' mode. Possible values 'insert' or 'overwrite'.
+    # By default, we are in "insert" mode.
+    set inputmode=insert
+
+    # Enabled "complete" to "enhance".
+    # If you have a file called "complete.tcsh" and you
+    # want to edit it, do "vi c.t<TAB>" and that's it.
+    set complete=enhance
+
+    # Possible values : cmd complete all
+    # Put it to extreme auto.
+    set correct=all
+
+    # Don't want to be autologed out.
+    # You can set it to autologout you after x minutes of idle time.
+    # You would do: set autologout=3  for 3 minutes of inactivity.
+    unset autologout
+
+    # Symbolic links are expanded to their true values : chase
+    # (possible values 'chase' 'ignore' 'expand')
+    # When traversing directories with symlinks, this substitures them
+    # with the real value. You will like it.
+    set symlinks=chase
+
+    # After a 'Ctrl-Z', it lists all the jobs.
+    set listjobs
+
+    # Files that are to be ignored from completion.
+    # These are the .o files that GCC produces. Usually you do not touch them.
+    set fignore=(.o)
+
+    # Various statistics.
+    unset time
+    #set time="%Uu %Ss %E %P %X+%Dk %I+%Oio %Fpf+%Ww"
+    set time=(8 "\
+    Time spent in user mode   (CPU seconds) : %Us\
+    Time spent in kernel mode (CPU seconds) : %Ss\
+    Total time                              : %Es\
+    CPU utilisation (percentage)            : %P\
+    Times the process was swapped           : %W\
+    Times of major page faults              : %F\
+    Times of minor page faults              : %R")
+
+    # After 4 hours, it changes the prompt to the following!
+    # sched +2:00 set prompt='Take a break\! :>'
+
+    # Setting the 'echo_style' parameter to 'both'.
+    # Other values are bsd, sysv, etc.
+    # This way, both 'set -n' and set '\003' styles will work.
+    set echo_style=both
+
+    # This changes the title bar/icon description of the console window.
+    switch ( $TERM )
+        case "xterm*":          # xterm
+            alias seticon 'echo -n "\033]1;\!*\007"'
+            alias sethead 'echo -n "\033]2;\!*\007"'
+            alias cwdcmd  'sethead "${USER}@${SHORT_HOST}"'
+            breaksw;
+        default:
+            alias seticon echo -n ""
+            alias sethead echo -n ""
+            unalias cwdcmd
+    endsw
+
+    # Use history to aid expansion
+    if ( $?tcsh ) then
+        # bindkeys for interactive shells
+        if ( -r $HOME/.config/tcsh/bindkey ) source $HOME/.config/tcsh/bindkey
+    endif
+    # aliases for interactive shells
+    if ( -r $HOME/.config/tcsh/alias ) source $HOME/.config/tcsh/alias
+    # Completions for interactive shells
+    uncomplete *
+    if ( -r $HOME/.config/tcsh/complete ) source $HOME/.config/tcsh/complete
+endif
+
+# Clean up after ourselves...
+unset red green yellow blue magenta cyan yellow white end
+## vi: ft=sh

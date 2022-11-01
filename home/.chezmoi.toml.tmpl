@@ -1,0 +1,40 @@
+{{/* boolean feature tags */}}
+{{- $headless := false -}}{{/* true if this machine does not have a screen and keyboard */}}
+{{- $ephemeral := false -}}{{/* true if this machine is ephemeral, e.g. a cloud or VM instance */}}
+{{- $gotroot := false -}}{{/* true if this machine has root or sudo access */}}
+{{- "" -}}
+
+{{/* detect GitHub codespaces, VSCode remote containers, Docker containers, and Vagrant boxes */}}
+{{- if or (env "CODESPACES") (env "REMOTE_CONTAINERS_IPC") (eq .chezmoi.username "root" "vagrant" "vscode" "runner") -}}
+{{-   $headless = true -}}
+{{-   $ephemeral = true -}}
+{{-   $gotroot = true -}}
+{{- end -}}
+
+{{- $hostname := .chezmoi.hostname -}}
+
+{{- if not $ephemeral -}}
+{{-   if lookPath "sudo" }}
+{{-     $gotroot = output "sh" "-c" "sudo -vn 2>&1 || true" | regexMatch "password" }}
+{{-   else if stdinIsATTY -}}
+{{-     if hasKey . "headless" -}}
+{{-       $headless = .headless -}}
+{{-     else -}}
+{{-       $headless = promptBool "headless" -}}
+{{-     end -}}
+{{-     if hasKey . "gotroot" -}}
+{{-       $gotroot = .gotroot -}}
+{{-     else -}}
+{{-       $gotroot = promptBool "gotroot" -}}
+{{-     end -}}
+{{-   else -}}
+{{-     $headless = true -}}
+{{-     $ephemeral = true -}}
+{{-   end -}}
+{{- end -}}
+
+[data]
+  headless = {{ $headless }}
+  hostname = {{ $hostname | quote }}
+  ephemeral = {{ $ephemeral }}
+  gotroot = {{ $gotroot }}

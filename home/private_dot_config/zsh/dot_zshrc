@@ -1,0 +1,109 @@
+# vim: ft=zsh
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Not running gpg-agent if it's a remote host.
+# In case we need to automate scripts and use ssh-agent from remote-host
+# we will run ssh-agent and load the keys only if the keys are present.
+# Load ssh identities and ssh-agents plugin
+typeset -a IDENTS
+if [[ -d ~/.ssh ]]; then
+    for file in ~/.ssh/*.pub(N); do
+        if [[ -f ${file%.pub} ]]; then
+            IDENTS+=${file:t:r}
+        fi
+    done
+    if [[ ! -z $IDENTS ]] ; then
+        zstyle :omz:plugins:ssh-agent identities $IDENTS
+        source $ZDOTDIR/plugins/ssh-agent.zsh
+    fi
+fi
+
+# Load powerlevel10k theme
+# If terminal supports 256 color then we will load p10k theme
+# otherwise stick with a p10k 8-color basic theme
+if [[ $terminfo[colors] -ge 256 ]]; then
+  [[ -f $ZDOTDIR/p10k.zsh ]] && source $ZDOTDIR/p10k.zsh
+else
+  [[ -f $ZDOTDIR/p10k-8colors.zsh ]] && source $ZDOTDIR/p10k-8colors.zsh
+fi
+# Load powerlevel10k theme
+[[ -f $ZDOTDIR/plugins/powerlevel10k/powerlevel10k.zsh-theme ]] && source $ZDOTDIR/plugins/powerlevel10k/powerlevel10k.zsh-theme
+
+# Load zsh-autosuggestions
+[[ -f $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh ]] && source $ZDOTDIR/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Load zsh-syntax-highlighting
+#[[ -f $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]] && source $ZDOTDIR/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+
+# Load zsh-fzf-history-search
+[[ -f $ZDOTDIR/plugins/zsh-fzf-history-search/zsh-fzf-history-search.zsh ]] && source $ZDOTDIR/plugins/zsh-fzf-history-search/zsh-fzf-history-search.zsh
+
+# Load zsh-history-substring-search
+source $ZDOTDIR/plugins/zsh-history-substring-search.zsh
+
+# Load broot
+if (( $+commands[broot] )); then
+    [[ -f $XDG_CONFIG_HOME/broot/launcher/bash/br ]] && source $XDG_CONFIG_HOME/broot/launcher/bash/br
+fi
+
+# Load and Setup junegunn/fzf
+# Auto-completion
+[[ $- == *i* ]] && [[ -f $ZDOTDIR/plugins/fzf/shell/completion.zsh ]] && source $ZDOTDIR/plugins/fzf/shell/completion.zsh 2> /dev/null
+# Key bindings
+[[ -f $ZDOTDIR/plugins/fzf/shell/key-bindings.zsh ]] && source $ZDOTDIR/plugins/fzf/shell/key-bindings.zsh
+
+# Load zsh-z
+[[ -f $ZDOTDIR/plugins/zsh-z/zsh-z.plugin.zsh ]] && source $ZDOTDIR/plugins/zsh-z/zsh-z.plugin.zsh
+
+# Load nvm
+[[ -f $ZDOTDIR/plugins/zsh-nvm/zsh-nvm.plugin.zsh ]] && source $ZDOTDIR/plugins/zsh-nvm/zsh-nvm.plugin.zsh
+
+HISTFILE="$XDG_DATA_HOME/zsh/history"
+[[ -f "$HISTFILE" ]] || { mkdir -p "$HISTFILE:h" && touch "$HISTFILE" }
+HISTSIZE=10000
+SAVEHIST=10000
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' completer _complete
+zstyle ':completion:*' matcher-list '' 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' '+l:|=* r:|=*'
+
+# Load autocompletions
+fpath=(/usr/local/share/zsh/site-functions $fpath)
+fpath=($ZDOTDIR/plugins/zsh-completions/src $fpath)
+autoload -Uz $fpath/*(.:t)
+source $ZDOTDIR/functions/completions
+fpath=($ZDOTDIR/functions/common $fpath)
+
+autoload -U compinit && compinit
+zmodload -i zsh/complist
+
+#Load ls
+#source $ZDOTDIR/plugins/ls.zsh
+
+source $XDG_CONFIG_HOME/shells/functions
+source $XDG_CONFIG_HOME/shells/alias
+
+unsetopt menu_complete
+unsetopt flowcontrol
+
+setopt prompt_subst
+setopt always_to_end
+setopt append_history
+setopt auto_menu
+setopt complete_in_word
+setopt extended_history
+setopt hist_expire_dups_first
+setopt hist_ignore_dups
+setopt hist_ignore_space
+setopt hist_verify
+setopt inc_append_history
+setopt interactivecomments
+setopt share_history
+
+# Load custom key-bindings
+source $ZDOTDIR/key-bindings.zsh

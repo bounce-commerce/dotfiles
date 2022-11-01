@@ -1,0 +1,15 @@
+# vim: set ft=sh :
+
+# default file permissions -rw------- / drwx------
+umask 077
+
+set -o vi
+
+# set prompt: ``username@hostname:directory $ ''
+PS1="\u@\h:\w \$ "
+
+. $XDG_CONFIG_HOME/shells/functions
+. $XDG_CONFIG_HOME/shells/alias
+
+# search path for cd(1)
+CDPATH=:$HOME
