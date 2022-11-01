@@ -55,7 +55,7 @@ setup_hostsfile() {
 
 setup_mailer() {
   openssl dhparam -out /etc/mail/certs/dh.param 4096
-  sed -i '' -e 's|# root:     me@my.domain|root: sysadmin@bounce-commerce.de|g' /etc/mail/aliases
+  sed -i '' -e '/my.domain/s/^.*/root: sysadmin@bounce-commerce.de/g' /etc/mail/aliases
   newaliases
   service sendmail restart
 }
@@ -64,10 +64,10 @@ main() {
   setup_interfaces
   setup_services
   setup_ssh
-  setup_update
   setup_shell
   setup_hostsfile
   setup_mailer
+  setup_update
 }
 
 main "$@"
