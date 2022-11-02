@@ -11,7 +11,12 @@
 {{-   $gotroot = true -}}
 {{- end -}}
 
-{{- $hostname := .chezmoi.hostname -}}
+{{- $hostname := promptStringOnce . "hostname" "FQDN" -}}
+{{- $ip4 := promptStringOnce . "ip4" "IPv4 address of primary interface" -}}
+{{- $netmask4 := promptStringOnce . "netmask4" "IPv4 netmask of primary interface" -}}
+{{- $gateway4 := promptStringOnce . "gateway4" "IPv4 default gateway" -}}
+{{- $ip6 := promptStringOnce . "ip6" "IPv6 address of primary interface" -}}
+{{- $runjail := promptBool . "runjail" "Will this host run jails" -}}
 
 {{- if not $ephemeral -}}
 {{-   if lookPath "sudo" }}
@@ -38,3 +43,8 @@
   hostname = {{ $hostname | quote }}
   ephemeral = {{ $ephemeral }}
   gotroot = {{ $gotroot }}
+  ip4 = {{ $ip4 | quote }}
+  netmask4 = {{ $netmask4 | quote }}
+  gateway4 = {{ $gateway4 | quote }}
+  ip6 = {{ $ip6 | quote }}
+  runjail = {{ $runjail }}
