@@ -1,0 +1,8 @@
+#!/bin/sh
+TimeStamp=`date +%Y-%m-%d`
+UNBOUND_CACHE=/tmp/unbound_cache-$TimeStamp
+fetch http://www.internic.net/domain/named.root -o /var/unbound/root.hints
+unbound-control dump_cache > $UNBOUND_CACHE
+service unbound restart
+unbound-control load_cache < $UNBOUND_CACHE
+rm -rf $UNBOUND_CACHE
