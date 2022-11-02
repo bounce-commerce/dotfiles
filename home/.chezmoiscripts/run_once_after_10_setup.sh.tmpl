@@ -50,11 +50,11 @@ setup_shell() {
 }
 
 setup_hostsfile() {
-  sed -i '' -e 's/localhost.my.domain/localhost.bounce-commerce.de/g'
+  sed -i '' -e 's/localhost.my.domain/localhost.bounce-commerce.de/g' /etc/hosts
 }
 
 setup_mailer() {
-  openssl dhparam -out /etc/mail/certs/dh.param 4096
+  [ ! -f /etc/mail/certs/dh.param ] && openssl dhparam -out /etc/mail/certs/dh.param 4096
   sed -i '' -e '/my.domain/s/^.*/root: sysadmin@bounce-commerce.de/g' /etc/mail/aliases
   newaliases
   service sendmail restart
