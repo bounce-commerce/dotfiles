@@ -1,8 +1,13 @@
 #!/bin/sh
-TimeStamp=`date +%Y-%m-%d`
-UNBOUND_CACHE=/tmp/unbound_cache-$TimeStamp
+__TIMESTAMP=$(date +%Y-%m-%d)
+UNBOUND_CACHE=/tmp/unbound_cache-$__TIMESTAMP
+if [ "$(command -v unbound)" ]; then
+    __UNBOUND=unbound
+else
+    __UNBOUND=local_unbound
+fi
 fetch http://www.internic.net/domain/named.root -o /var/unbound/root.hints
-unbound-control dump_cache > $UNBOUND_CACHE
-service unbound restart
-unbound-control load_cache < $UNBOUND_CACHE
-rm -rf $UNBOUND_CACHE
+${__UNBOUND}-control dump_cache > "$UNBOUND_CACHE"
+service ${__UNBOUND} restart
+${__UNBOUND}-control load_cache < "$UNBOUND_CACHE"
+rm -rf "$UNBOUND_CACHE"
