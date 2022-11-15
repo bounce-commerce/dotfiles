@@ -16,7 +16,7 @@
 {{- $netmask4 := promptStringOnce . "netmask4" "IPv4 netmask of primary interface" -}}
 {{- $gateway4 := promptStringOnce . "gateway4" "IPv4 default gateway" -}}
 {{- $ip6 := promptStringOnce . "ip6" "IPv6 address of primary interface" -}}
-{{- $runjail := promptBool . "runjail" "Will this host run jails" -}}
+{{- $runjail := promptBoolOnce . "runjail" "Will this host run jails" -}}
 
 {{- if not $ephemeral -}}
 {{-   if lookPath "sudo" }}
