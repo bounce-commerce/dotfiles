@@ -4,7 +4,7 @@ set -ue # -e: exit on error
 
 _OS=$(uname)
 _ARCH=$(uname -p)
-_CHEZMOI_VERSION="2.27.1"
+_CHEZMOI_VERSION="2.27.3"
 _GITHUB_USERNAME="bounce-commerce"
 
 readonly _OS
