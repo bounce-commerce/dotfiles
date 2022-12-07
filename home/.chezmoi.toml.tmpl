@@ -11,12 +11,12 @@
 {{-   $gotroot = true -}}
 {{- end -}}
 
-{{- $hostname := promptStringOnce . "hostname" "FQDN" -}}
-{{- $ip4 := promptStringOnce . "ip4" "IPv4 address of primary interface" -}}
-{{- $netmask4 := promptStringOnce . "netmask4" "IPv4 netmask of primary interface" -}}
-{{- $gateway4 := promptStringOnce . "gateway4" "IPv4 default gateway" -}}
-{{- $ip6 := promptStringOnce . "ip6" "IPv6 address of primary interface" -}}
-{{- $runjail := promptBoolOnce . "runjail" "Will this host run jails" -}}
+{{- $hostname := promptString . "hostname" "FQDN" -}}
+{{- $ip4 := promptString . "ip4" "IPv4 address of primary interface" -}}
+{{- $netmask4 := promptString . "netmask4" "IPv4 netmask of primary interface" -}}
+{{- $gateway4 := promptString . "gateway4" "IPv4 default gateway" -}}
+{{- $ip6 := promptString . "ip6" "IPv6 address of primary interface" -}}
+{{- $runjail := promptBool . "runjail" "Will this host run jails" -}}
 
 {{- if not $ephemeral -}}
 {{-   if lookPath "sudo" }}
