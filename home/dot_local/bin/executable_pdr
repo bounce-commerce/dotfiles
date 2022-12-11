@@ -100,12 +100,6 @@ EOF
     exit 1
 }
 
-generate_ports_list() {
-    ${_PORTGREP_BIN} -R /usr/local/poudriere/ports/default -o -m bofh@FreeBSD.org -O tz@FreeBSD.org > "$_TMPFILE"
-    find $_PORTSDIR -type d -d 2 \( -iname "*php74*" -o -iname "*php80*" -o -iname "*php81*" -o -iname "*php82*" \) | sed -e "s|$_PORTSDIR/||g" >> "$_TMPFILE"
-    ${_SORT_BIN} "$_TMPFILE" > "$_PORTSLIST"
-}
-
 update_tree() {
     e_warning "UPDATE quarterly portstree"
     cd /usr/local/poudriere/ports/quarterly || return
@@ -115,7 +109,7 @@ update_tree() {
     cd ${_PORTSDIR} || return
     ${_GIT_BIN} checkout working && ${_GIT_BIN} stash
     ${_GIT_BIN} checkout main && ${_GIT_BIN} pull --ff-only && ${_GIT_BIN} rebase main working
-    ${_GIT_BIN} stash apply
+    ${_GIT_BIN} stash pop
 
     e_warning "Creating php ports list"
     find $_PORTSDIR -type d -d 2 \( -iname "*php74*" -o -iname "*php80*" -o -iname "*php81*" -o -iname "*php82*" \) | sed -e "s|$_PORTSDIR/||g" > "$_PORTSLISTDIR"/PHP
@@ -235,7 +229,6 @@ main() {
         ;;
     -a)
         # Build all
-        generate_ports_list
         update_tree
         build_kara
         build_mail
