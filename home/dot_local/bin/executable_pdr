@@ -112,10 +112,10 @@ update_tree() {
     ${_GIT_BIN} stash pop
 
     e_warning "Creating php ports list"
-    find $_PORTSDIR -type d -d 2 \( -iname "*php74*" -o -iname "*php80*" -o -iname "*php81*" -o -iname "*php82*" \) | sed -e "s|$_PORTSDIR/||g" > "$_PORTSLISTDIR"/PHP
+    find $_PORTSDIR -type d -d 2 \( -iname "*php80*" -o -iname "*php81*" -o -iname "*php82*" \) | sed -e "s|$_PORTSDIR/||g" > "$_PORTSLISTDIR"/PHP
 
     e_warning "Creating php consumers ports list"
-    portgrep -R $_PORTSDIR -u php -o | grep -v -E 'icingaweb2-module-idoreports|icingaweb2-module-pdfexport|icingaweb2-module-reporting|php74|php80|php81|php82' > $_TEMPLIST
+    portgrep -R $_PORTSDIR -u php -o | grep -v -E 'icingaweb2-module-idoreports|icingaweb2-module-pdfexport|icingaweb2-module-reporting|php80|php81|php82' > $_TEMPLIST
     portgrep -R $_PORTSDIR -u pear -o >> $_TEMPLIST
     sort -u $_TEMPLIST > "$_PORTSLISTDIR"/php
     rm $_TEMPLIST
@@ -144,7 +144,7 @@ build_php_ports() {
 }
 
 build_php_consumer_ports() {
-    for _SETS in testPHP74 testPHP80 testPHP81 testPHP82
+    for _SETS in testPHP80 testPHP81 testPHP82
     do
         e_warning "Starting bulk for: $_TESTQATJAIL with $_SETS"
         ${_POUDRIERE_BIN} bulk -j $_TESTQATJAIL -p head -z $_SETS -f "$_PORTSLISTDIR"/php
@@ -184,7 +184,7 @@ test_ports() {
 }
 
 test_php_ports() {
-    for _SETS in testPHP74 testPHP80 testPHP81 testPHP82
+    for _SETS in testPHP80 testPHP81 testPHP82
     do
         e_warning "Starting bulk for: $_TESTQATJAIL with $_SETS"
         ${_POUDRIERE_BIN} bulk -j $_TESTQATJAIL -p head -z $_SETS -t "$@"
