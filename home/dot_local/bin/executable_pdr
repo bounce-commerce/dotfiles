@@ -168,6 +168,9 @@ build_kara() {
     ${_POUDRIERE_BIN} pkgclean -j $_KARA_JAIL -p $_KARA_PORTS -z $_KARA_SET -y -f $_KARA_LIST -O BounceExperts
     ${_POUDRIERE_BIN} logclean -j $_KARA_JAIL -p $_KARA_PORTS -z $_KARA_SET -y 30 -O BounceExperts
     ${_POUDRIERE_BIN} bulk -j $_KARA_JAIL -p $_KARA_PORTS -z $_KARA_SET -f $_KARA_LIST -O BounceExperts
+    ${_POUDRIERE_BIN} pkgclean -j 124 -p $_KARA_PORTS -z $_KARA_SET -y -f $_KARA_LIST -O BounceExperts
+    ${_POUDRIERE_BIN} logclean -j 124 -p $_KARA_PORTS -z $_KARA_SET -y 30 -O BounceExperts
+    ${_POUDRIERE_BIN} bulk -j 124 -p $_KARA_PORTS -z $_KARA_SET -f $_KARA_LIST -O BounceExperts
 }
 
 build_mail() {
