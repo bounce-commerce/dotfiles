@@ -1,0 +1,144 @@
+#!/bin/sh
+
+set -x
+# ----------------------------------------------------------------------------
+_ACMESH_BIN=$(command -v acme.sh)
+_CURL_BIN=$(command -v curl)
+_CERT_BASEDIR="/usr/local/etc/letsencrypt/live"
+_MKDIR="mkdir -p"
+COLOR_RESET="\033[0;0m"
+COLOR_RED="\033[0;31m"
+COLOR_GREEN="\033[0;32m"
+COLOR_YELLOW="\033[1;33m"
+
+_RELEASE=$(freebsd-version)
+_VERSION=${_RELEASE%-*}
+_IP6GW=$(ifconfig bridge0 inet6 | grep inet6 | awk '{print $2}')
+_TS=$(date +%Y-%m-%d_%H-%M-%S)
+_DOMAIN_NAME=
+# ----------------------------------------------------------------------------
+
+# Notify message on error, but do not exit
+error_notify() {
+    echo "${COLOR_RED}$*${COLOR_RESET}" 1>&2
+}
+
+# Notify message on error and exit
+error_exit() {
+    error_notify "$@"
+    exit 1
+}
+
+info() {
+    echo "${COLOR_GREEN}$*${COLOR_RESET}"
+}
+
+warn() {
+    echo "${COLOR_YELLOW}$*${COLOR_RESET}"
+}
+
+# install dig if needed
+#[ ! -x /usr/bin/dig ] && {
+#    apt-get install bind9-host -y
+#}
+
+# install acme.sh if needed
+if [ -z "$_ACMESH_BIN" ]; then
+  pkg install -y -q acme.sh
+  _ACMESH_BIN=$(command -v acme.sh)
+fi
+
+# install curl if needed
+if [ -z "$_CURL_BIN" ]; then
+  pkg install -y -q curl
+fi
+
+_cleanup() {
+if [ -d "$_CERT_BASEDIR/$_DOMAIN_NAME" ]; then
+    rm -rf "$_CERT_BASEDIR/${_DOMAIN_NAME:?}"
+fi
+    # create folder to store certificate
+    $_MKDIR "$_CERT_BASEDIR/$_DOMAIN_NAME"
+}
+
+_install_cert() {
+    $_ACMESH_BIN --install-cert -d "$_DOMAIN_NAME" --ecc \
+        --cert-file "$_CERT_BASEDIR/$_DOMAIN_NAME/cert.pem" \
+        --key-file "$_CERT_BASEDIR/$_DOMAIN_NAME/privkey.pem" \
+        --fullchain-file "$_CERT_BASEDIR/$_DOMAIN_NAME/fullchain.pem" \
+        --ca-file "$_CERT_BASEDIR/$_DOMAIN_NAME/chain.pem" \
+        --reloadcmd "service nginx restart"
+}
+
+_issue_cert_standalone() {
+if [ ! -d $HOME/.acme.sh/${_DOMAIN_NAME}_ecc ] ; then
+    $_ACMESH_BIN --issue -d "$_DOMAIN_NAME" -k ec-384 --standalone \
+        --pre-hook "service nginx stop " \
+        --post-hook "service nginx start" \
+        --server letsencrypt
+else
+    error_notify "Certificate has already been issued; --renew or -r to renew the certificates."
+fi
+}
+
+_issue_cert_wildcard() {
+if [ ! -d $HOME/.acme.sh/${_DOMAIN_NAME}_ecc ] ; then
+    $_ACMESH_BIN --issue -d \*."$_DOMAIN_NAME" -k ec-384 --dns dns_autodns \
+        --server letsencrypt
+else
+    error_notify "Certificate has already been issued; --renew or -r to renew the certificates."
+fi
+}
+
+_help() {
+    echo "Issue and install SSL certificates using acme.sh"
+    echo "Usage: acme [type] <domain> [mode]"
+    echo "  Types:"
+    echo "       -d, --domain <domain_name> ..... for domain.tld or sub.domain.tld"
+    echo "       -w, --wildcard <domain_name> ..... for domain.tld + *.domain.tld"
+    echo "  Options:"
+    echo "       -h, --help, help ... displays this help information"
+    return 0
+}
+
+main() {
+    [ $# -lt 1 ] && _help
+
+    CMD=$1
+    shift
+
+    # Handle special-case commands first.
+    case "${CMD}" in
+    help|-h|--help)
+        _help
+        ;;
+    -d|--domain)
+        if [ $# -eq 0 ]; then
+            error_exit "Domain name not provided"
+        else
+            _DOMAIN_NAME="$1"
+        fi
+        _issue_cert_standalone
+        _cleanup
+        _install_cert
+        shift
+        ;;
+    -w|--wildcard)
+        if [ $# -eq 0 ]; then
+            error_exit "Domain name not provided"
+        else
+            _DOMAIN_NAME="$1"
+        fi
+        _issue_cert_wildcard
+        _cleanup
+        _install_cert
+        shift
+        ;;
+    *) # Filter out all non-commands
+        error_notify "Illegal option ${CMD}"
+        _help
+        ;;
+    esac
+}
+
+main "$@"
