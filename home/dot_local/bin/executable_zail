@@ -35,7 +35,7 @@ COLOR_BG_CYAN="\033[46m"
 COLOR_BG_LIGHT_GRAY="\033[47m"
 
 _RELEASE=$(freebsd-version)
-_VERSION=${_RELEASE%-*}
+_VERSION=${_RELEASE%-p*}
 _IP6GW=$(ifconfig bridge0 inet6 | grep inet6 | awk '{print $2}')
 _TS=$(date +%Y-%m-%d_%H-%M-%S)
 
@@ -83,7 +83,7 @@ if [ ! -d /usr/jails/template/$_VERSION ]; then
 
     # create dir for version and fetch it
     mkdir -p /usr/jails/bases/$_VERSION
-    fetch http://download.freebsd.org/releases/amd64/$_VERSION/base.txz -o /usr/jails/bases/$_VERSION
+    fetch https://download.freebsd.org/releases/amd64/$_VERSION/base.txz -o /usr/jails/bases/$_VERSION
 
     # init basic sharedfs and template
     zfs create -p zroot/usr/jails/sharedfs/$_VERSION
@@ -150,7 +150,7 @@ firewall_enable="YES"
 firewall_type="OPEN"
 EOF
     if [ -f /etc/jail.conf ]; then
-        mv /etc/jail.conf /etc/jail.conf.bak
+        mv /etc/jail.conf /etc/jail.conf.bak.$_TS
     fi
     cat <<EOF >> /etc/jail.conf
 exec.start = "/bin/sh /etc/rc";
