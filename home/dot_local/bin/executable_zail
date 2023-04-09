@@ -84,6 +84,7 @@ if [ ! -d /usr/jails/template/$_VERSION ]; then
     # create dir for version and fetch it
     mkdir -p /usr/jails/bases/$_VERSION
     fetch https://download.freebsd.org/releases/amd64/$_VERSION/base.txz -o /usr/jails/bases/$_VERSION
+    fetch https://download.freebsd.org/releases/amd64/$_VERSION/src.txz -o /usr/jails/bases/$_VERSION
 
     # init basic sharedfs and template
     zfs create -p zroot/usr/jails/sharedfs/$_VERSION
@@ -91,6 +92,7 @@ if [ ! -d /usr/jails/template/$_VERSION ]; then
 
     # create template by using complete base
     tar -xf /usr/jails/bases/$_VERSION/base.txz -C /usr/jails/template/$_VERSION
+    tar -xf /usr/jails/bases/$_VERSION/src.txz -C /usr/jails/template/$_VERSION
 
     # copy local /etc/resolv.conf into template
     cp /etc/resolv.conf /usr/jails/template/$_VERSION/etc/resolv.conf
@@ -110,7 +112,7 @@ if [ ! -d /usr/jails/template/$_VERSION ]; then
     mkdir -p /usr/jails/sharedfs/$_VERSION/usr
 
     cd /usr/jails/template/$_VERSION/usr
-    for mountpoints in bin include lib lib32 libdata libexec sbin share; do
+    for mountpoints in bin include lib lib32 libdata libexec sbin share src; do
         mv /usr/jails/template/$_VERSION/usr/$mountpoints /usr/jails/sharedfs/$_VERSION/usr/$mountpoints
         ln -s /sharedfs/usr/$mountpoints $mountpoints
     done
@@ -255,6 +257,13 @@ main() {
         warn "Starting jails"
         /etc/rc.d/jail restart
         info "Successfully started all jails"
+        warn "Updating etc files with etcupdate"
+        for i in $(jls name); do                                                                                 ─╯
+          echo "JAILNAME: $i"
+          jexec $i etcupdate extract
+          jexec $i etcupdate
+        done
+        info "Successfully installed etc files"
         ;;
     -c)
         # Parse the target and ensure it exists.
